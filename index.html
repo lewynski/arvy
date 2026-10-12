@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ARVY - Open or Download the App</title>
 <style>
-  :root{ --bg:#0b1f1a; --card:#12332b; --line:#245246; --text:#eafaf4; --muted:#8fb8aa; --accent:#3ddc97; }
+  :root{ --bg:#0b1f1a; --card:#12332b; --line:#245246; --text:#eafaf4; --muted:#8fb8aa; --accent:#3ddc97; --bad:#ff6b6b; }
   *{box-sizing:border-box;margin:0;padding:0}
   body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
        min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
@@ -15,6 +15,8 @@
   .btn{display:block;background:var(--accent);color:#06231a;font-weight:700;font-size:18px;
        padding:16px 28px;border-radius:14px;text-decoration:none;margin:12px auto;max-width:320px}
   .btn.ghost{background:transparent;color:var(--text);border:2px solid var(--line)}
+  .err{display:none;background:#2a1414;border:1px solid var(--bad);color:var(--bad);border-radius:14px;
+       padding:14px 18px;margin:16px auto 0;max-width:420px;font-size:15px;line-height:1.4}
   .note{color:var(--muted);font-size:13px;margin-top:12px}
   .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;margin-top:32px;text-align:left}
   .card h2{font-size:18px;margin-bottom:10px}
@@ -28,6 +30,7 @@
   <p class="sub">Recycle PET bottles and aluminum cans. Earn points and get Wi-Fi vouchers.</p>
 
   <a class="btn" id="open" href="#">Open ARVY</a>
+  <p class="err" id="err"></p>
   <a class="btn ghost" href="arvy.apk" download>Download ARVY (Android)</a>
   <p class="note">Android phones and tablets only.</p>
 
@@ -43,18 +46,43 @@
 </main>
 
 <script>
-  const PACKAGE = "com.example.recyclewifi";            // must match applicationId in app/build.gradle
-  const PAGE    = "https://lewynski.github.io/arvy/";
-  // intent:// opens the installed app. If it isn't installed, Chrome loads the fallback (this page, #download).
-  const intentUrl = "intent://lewynski.github.io/arvy/#Intent;scheme=https;package=" + PACKAGE +
-                    ";S.browser_fallback_url=" + encodeURIComponent(PAGE + "#download") + ";end";
+  const PACKAGE = "com.example.recyclewifi";   // must match applicationId in app/build.gradle
+  const intentUrl = "intent://lewynski.github.io/arvy/#Intent;scheme=https;package=" + PACKAGE + ";end";
+  const isAndroid = /Android/i.test(navigator.userAgent);
+  const openBtn = document.getElementById("open");
+  const errBox = document.getElementById("err");
+  let timer = null;
 
-  document.getElementById("open").href = intentUrl;
-
-  // Opening from the QR lands here. On Android, try the app once, unless we are already the fallback.
-  if (/Android/i.test(navigator.userAgent) && location.hash !== "#download") {
-    location.href = intentUrl;
+  function showError(msg){
+    errBox.textContent = msg;
+    errBox.style.display = "block";
   }
+
+  function openApp(){
+    errBox.style.display = "none";
+    if(!isAndroid){
+      showError("ARVY is only available for Android right now.");
+      return;
+    }
+    // If the app is installed, Android opens it and this page goes to the background.
+    // If the page is still visible after 1.5 s, the app did not open.
+    clearTimeout(timer);
+    timer = setTimeout(()=>{
+      if(document.visibilityState === "visible"){
+        showError("ARVY is not installed on this device. Tap Download ARVY below to install it, then scan the QR code again.");
+      }
+    }, 1500);
+    window.location.href = intentUrl;
+  }
+
+  document.addEventListener("visibilitychange", ()=>{
+    if(document.visibilityState === "hidden") clearTimeout(timer);
+  });
+
+  openBtn.addEventListener("click", e=>{ e.preventDefault(); openApp(); });
+
+  // Opening from the QR code lands here. Try the app once on Android.
+  if(isAndroid) openApp();
 </script>
 </body>
 </html>
