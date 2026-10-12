@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ARVY - Download the App</title>
+<title>ARVY - Open or Download the App</title>
 <style>
   :root{ --bg:#0b1f1a; --card:#12332b; --line:#245246; --text:#eafaf4; --muted:#8fb8aa; --accent:#3ddc97; }
   *{box-sizing:border-box;margin:0;padding:0}
@@ -12,8 +12,9 @@
   main{max-width:520px;width:100%;text-align:center}
   h1{font-size:40px;letter-spacing:.2em;color:var(--accent);font-weight:800}
   .sub{color:var(--muted);margin:8px 0 28px;font-size:16px;line-height:1.4}
-  .btn{display:inline-block;background:var(--accent);color:#06231a;font-weight:700;font-size:18px;
-       padding:16px 28px;border-radius:14px;text-decoration:none}
+  .btn{display:block;background:var(--accent);color:#06231a;font-weight:700;font-size:18px;
+       padding:16px 28px;border-radius:14px;text-decoration:none;margin:12px auto;max-width:320px}
+  .btn.ghost{background:transparent;color:var(--text);border:2px solid var(--line)}
   .note{color:var(--muted);font-size:13px;margin-top:12px}
   .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;margin-top:32px;text-align:left}
   .card h2{font-size:18px;margin-bottom:10px}
@@ -26,7 +27,8 @@
   <h1>ARVY</h1>
   <p class="sub">Recycle PET bottles and aluminum cans. Earn points and get Wi-Fi vouchers.</p>
 
-  <a class="btn" href="arvy.apk" download>Download ARVY (Android)</a>
+  <a class="btn" id="open" href="#">Open ARVY</a>
+  <a class="btn ghost" href="arvy.apk" download>Download ARVY (Android)</a>
   <p class="note">Android phones and tablets only.</p>
 
   <div class="card">
@@ -39,5 +41,20 @@
     </ol>
   </div>
 </main>
+
+<script>
+  const PACKAGE = "com.example.recyclewifi";            // must match applicationId in app/build.gradle
+  const PAGE    = "https://lewynski.github.io/arvy/";
+  // intent:// opens the installed app. If it isn't installed, Chrome loads the fallback (this page, #download).
+  const intentUrl = "intent://lewynski.github.io/arvy/#Intent;scheme=https;package=" + PACKAGE +
+                    ";S.browser_fallback_url=" + encodeURIComponent(PAGE + "#download") + ";end";
+
+  document.getElementById("open").href = intentUrl;
+
+  // Opening from the QR lands here. On Android, try the app once, unless we are already the fallback.
+  if (/Android/i.test(navigator.userAgent) && location.hash !== "#download") {
+    location.href = intentUrl;
+  }
+</script>
 </body>
 </html>
