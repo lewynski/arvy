@@ -89,26 +89,23 @@
   <h1>ARVY Mobile</h1>
   <p>Piliin ang opsyon sa ibaba upang buksan ang app o i-download ang installer sa iyong telepono.</p>
 
-  <!-- Direktang nagbubukas gamit ang Android Intent nang WALANG Play Store fallback -->
-  <a id="btn-open" class="btn btn-primary" href="intent:#Intent;action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER;package=com.example.recyclewifi;component=com.example.recyclewifi/.SplashActivity;end">
+  <!-- PURE SCHEME LANG: HINDI ITO DADAAN SA PLAY STORE -->
+  <a id="btn-open" class="btn btn-primary" href="arvy://open">
     Buksan ang ARVY App
   </a>
 
-  <!-- Direktang Download ng APK -->
+  <!-- DIREKTANG DOWNLOAD NG APK -->
   <a id="btn-download" class="btn btn-secondary" href="arvy.apk" download>
     I-download ang APK Installer
   </a>
 
   <div class="note">
-    Kung wala pang naka-install na app, i-click ang <b>Download APK Installer</b>.
+    Kung wala pang naka-install na app o ayaw bumukas, i-click ang <b>I-download ang APK Installer</b>.
   </div>
 </div>
 
 <script>
-  // Subukang i-trigger ang app kapag pinindot ang Open button
-  document.getElementById('btn-open').addEventListener('click', function(e) {
-    // Walang redirect papuntang Play Store kapag hindi nakita
-  });
+  // Hindi na tayo gagamit ng auto-redirect sa window.onload upang maiwasan ang auto-trigger ng Play Store
 </script>
 
 </body>
