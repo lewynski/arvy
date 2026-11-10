@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ARVY App Launcher</title>
+<title>ARVY Mobile App</title>
 <style>
   :root {
     --bg: #f4f7f5;
     --card: #ffffff;
     --accent: #187a4e;
-    --accent-hover: #12643f;
+    --accent-dark: #12643f;
     --text: #152c22;
     --muted: #62776c;
     --shadow: 0 10px 30px rgba(24, 122, 78, 0.08);
@@ -60,7 +60,7 @@
     text-decoration: none;
     cursor: pointer;
     border: none;
-    transition: all 0.2s;
+    transition: transform 0.15s, background 0.15s;
   }
   .btn-primary {
     background: var(--accent);
@@ -68,15 +68,17 @@
     margin-bottom: 12px;
     box-shadow: 0 4px 14px rgba(24, 122, 78, 0.25);
   }
-  .btn-primary:active { transform: scale(0.98); }
+  .btn-primary:active { transform: scale(0.98); background: var(--accent-dark); }
   .btn-secondary {
     background: #eaf3ed;
     color: var(--accent);
   }
+  .btn-secondary:active { transform: scale(0.98); }
   .note {
-    margin-top: 18px;
+    margin-top: 20px;
     font-size: 12px;
     color: #8da295;
+    line-height: 1.4;
   }
 </style>
 </head>
@@ -85,29 +87,28 @@
 <div class="card">
   <div class="logo">♻️</div>
   <h1>ARVY Mobile</h1>
-  <p id="msg">Tap the button below to open your ARVY App, or download the installer if you don't have it yet.</p>
+  <p>Piliin ang opsyon sa ibaba upang buksan ang app o i-download ang installer sa iyong telepono.</p>
 
-  <!-- Opisyal na Android Intent URL para sa Chrome -->
-  <a id="btn-open" class="btn btn-primary" href="intent://open#Intent;scheme=arvy;package=com.example.recyclewifi;end">
-    Open ARVY App
+  <!-- Direktang nagbubukas gamit ang Android Intent nang WALANG Play Store fallback -->
+  <a id="btn-open" class="btn btn-primary" href="intent:#Intent;action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER;package=com.example.recyclewifi;component=com.example.recyclewifi/.SplashActivity;end">
+    Buksan ang ARVY App
   </a>
 
-  <!-- Direct Download ng APK -->
+  <!-- Direktang Download ng APK -->
   <a id="btn-download" class="btn btn-secondary" href="arvy.apk" download>
-    Download APK
+    I-download ang APK Installer
   </a>
 
-  <div class="note">Reverse Vending Machine System</div>
+  <div class="note">
+    Kung wala pang naka-install na app, i-click ang <b>Download APK Installer</b>.
+  </div>
 </div>
 
 <script>
-  // Android Intent URI (subok na sa Google Chrome sa Android)
-  const intentUri = "intent://open#Intent;scheme=arvy;package=com.example.recyclewifi;end";
-
-  // Subukang buksan agad pagka-load
-  window.onload = function() {
-    window.location.href = intentUri;
-  };
+  // Subukang i-trigger ang app kapag pinindot ang Open button
+  document.getElementById('btn-open').addEventListener('click', function(e) {
+    // Walang redirect papuntang Play Store kapag hindi nakita
+  });
 </script>
 
 </body>
