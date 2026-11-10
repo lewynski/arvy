@@ -1,88 +1,127 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ARVY - Open or Download the App</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ARVY App Launcher & Download</title>
 <style>
-  :root{ --bg:#0b1f1a; --card:#12332b; --line:#245246; --text:#eafaf4; --muted:#8fb8aa; --accent:#3ddc97; --bad:#ff6b6b; }
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
-       min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
-  main{max-width:520px;width:100%;text-align:center}
-  h1{font-size:40px;letter-spacing:.2em;color:var(--accent);font-weight:800}
-  .sub{color:var(--muted);margin:8px 0 28px;font-size:16px;line-height:1.4}
-  .btn{display:block;background:var(--accent);color:#06231a;font-weight:700;font-size:18px;
-       padding:16px 28px;border-radius:14px;text-decoration:none;margin:12px auto;max-width:320px}
-  .btn.ghost{background:transparent;color:var(--text);border:2px solid var(--line)}
-  .err{display:none;background:#2a1414;border:1px solid var(--bad);color:var(--bad);border-radius:14px;
-       padding:14px 18px;margin:16px auto 0;max-width:420px;font-size:15px;line-height:1.4}
-  .note{color:var(--muted);font-size:13px;margin-top:12px}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;margin-top:32px;text-align:left}
-  .card h2{font-size:18px;margin-bottom:10px}
-  .card ol{padding-left:20px;color:var(--muted);font-size:15px;line-height:1.6}
-  .card b{color:var(--text)}
+  :root {
+    --bg: #f4f7f5;
+    --card: #ffffff;
+    --accent: #187a4e;
+    --accent-hover: #12643f;
+    --text: #152c22;
+    --muted: #62776c;
+    --shadow: 0 10px 30px rgba(24, 122, 78, 0.08);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
+  }
+  .card {
+    background: var(--card);
+    border-radius: 24px;
+    padding: 36px 28px;
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+    box-shadow: var(--shadow);
+    border: 1px solid #dbe6df;
+  }
+  .logo {
+    width: 84px;
+    height: 84px;
+    border-radius: 20px;
+    margin: 0 auto 16px;
+    background: #e8f5ee;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+  }
+  h1 { font-size: 26px; font-weight: 800; margin-bottom: 8px; color: var(--accent); }
+  p { font-size: 14px; color: var(--muted); line-height: 1.5; margin-bottom: 24px; }
+  .btn {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    border-radius: 14px;
+    font-size: 16px;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+    margin-bottom: 12px;
+    box-shadow: 0 4px 12px rgba(24, 122, 78, 0.2);
+  }
+  .btn-primary:active { transform: scale(0.98); }
+  .btn-secondary {
+    background: #eaf3ed;
+    color: var(--accent);
+  }
+  .status {
+    font-size: 12px;
+    color: #8da295;
+    margin-top: 16px;
+  }
 </style>
 </head>
 <body>
-<main>
-  <h1>ARVY</h1>
-  <p class="sub">Recycle PET bottles and aluminum cans. Earn points and get Wi-Fi vouchers.</p>
 
-  <a class="btn" id="open" href="#">Open ARVY</a>
-  <p class="err" id="err"></p>
-  <a class="btn ghost" href="arvy.apk" download>Download ARVY (Android)</a>
-  <p class="note">Android phones and tablets only.</p>
+<div class="card">
+  <div class="logo">♻️</div>
+  <h1>ARVY Mobile</h1>
+  <p id="msg">Opening ARVY App on your device… If it doesn't open automatically, download the installer below.</p>
 
-  <div class="card">
-    <h2>How to install</h2>
-    <ol>
-      <li>Tap <b>Download ARVY</b> above.</li>
-      <li>When the download finishes, open the file from your notifications or Downloads folder.</li>
-      <li>If Android asks, allow installs from this browser. The option name varies by phone.</li>
-      <li>Tap <b>Install</b>, then <b>Open</b>.</li>
-    </ol>
-  </div>
-</main>
+  <a id="btn-open" class="btn btn-primary" href="arvy://open">Open ARVY App</a>
+  <a id="btn-download" class="btn btn-secondary" href="arvy.apk" download>Download APK</a>
+
+  <div class="status" id="timer-text">Checking app installation…</div>
+</div>
 
 <script>
-  const PACKAGE = "com.example.recyclewifi";   // must match applicationId in app/build.gradle
-  const intentUrl = "intent://lewynski.github.io/arvy/#Intent;scheme=https;package=" + PACKAGE + ";end";
-  const isAndroid = /Android/i.test(navigator.userAgent);
-  const openBtn = document.getElementById("open");
-  const errBox = document.getElementById("err");
-  let timer = null;
+  // Link para sa Deep Link scheme ng inyong App
+  const appScheme = "arvy://open";
+  // Direct download link ng inyong APK sa parehong repository
+  const apkDownloadUrl = "https://lewynski.github.io/arvy/arvy.apk";
 
-  function showError(msg){
-    errBox.textContent = msg;
-    errBox.style.display = "block";
-  }
+  function tryOpenApp() {
+    const start = Date.now();
+    
+    // Subukang buksan ang app gamit ang custom scheme
+    window.location.href = appScheme;
 
-  function openApp(){
-    errBox.style.display = "none";
-    if(!isAndroid){
-      showError("ARVY is only available for Android right now.");
-      return;
-    }
-    // If the app is installed, Android opens it and this page goes to the background.
-    // If the page is still visible after 1.5 s, the app did not open.
-    clearTimeout(timer);
-    timer = setTimeout(()=>{
-      if(document.visibilityState === "visible"){
-        showError("ARVY is not installed on this device. Tap Download ARVY below to install it, then scan the QR code again.");
+    // Timer para mag-fallback sa download kung hindi bumukas ang app sa loob ng 1.5 seconds
+    setTimeout(() => {
+      // Kung nanatili pa rin sa browser ang user (hindi nag-minimize ang browser para buksan ang app):
+      if (document.hidden || document.webkitHidden) {
+        return; // Nabuksan na ang app
+      }
+      
+      const elapsed = Date.now() - start;
+      if (elapsed < 2500) {
+        document.getElementById("msg").textContent = "ARVY App is not yet installed. Starting APK download…";
+        document.getElementById("timer-text").textContent = "Downloading installer…";
+        window.location.href = apkDownloadUrl;
       }
     }, 1500);
-    window.location.href = intentUrl;
   }
 
-  document.addEventListener("visibilitychange", ()=>{
-    if(document.visibilityState === "hidden") clearTimeout(timer);
-  });
-
-  openBtn.addEventListener("click", e=>{ e.preventDefault(); openApp(); });
-
-  // Opening from the QR code lands here. Try the app once on Android.
-  if(isAndroid) openApp();
+  // Patakbuhin kaagad pagka-scan ng QR code
+  window.addEventListener("DOMContentLoaded", tryOpenApp);
 </script>
+
 </body>
 </html>
