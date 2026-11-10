@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ARVY App Launcher & Download</title>
+<title>ARVY App Launcher</title>
 <style>
   :root {
     --bg: #f4f7f5;
@@ -16,7 +16,7 @@
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     background: var(--bg);
     color: var(--text);
     display: flex;
@@ -28,16 +28,16 @@
   .card {
     background: var(--card);
     border-radius: 24px;
-    padding: 36px 28px;
-    max-width: 400px;
+    padding: 36px 24px;
+    max-width: 380px;
     width: 100%;
     text-align: center;
     box-shadow: var(--shadow);
     border: 1px solid #dbe6df;
   }
   .logo {
-    width: 84px;
-    height: 84px;
+    width: 80px;
+    height: 80px;
     border-radius: 20px;
     margin: 0 auto 16px;
     background: #e8f5ee;
@@ -46,12 +46,14 @@
     justify-content: center;
     font-size: 40px;
   }
-  h1 { font-size: 26px; font-weight: 800; margin-bottom: 8px; color: var(--accent); }
+  h1 { font-size: 24px; font-weight: 800; margin-bottom: 8px; color: var(--accent); }
   p { font-size: 14px; color: var(--muted); line-height: 1.5; margin-bottom: 24px; }
   .btn {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 100%;
-    padding: 14px;
+    padding: 15px;
     border-radius: 14px;
     font-size: 16px;
     font-weight: 700;
@@ -64,17 +66,17 @@
     background: var(--accent);
     color: #fff;
     margin-bottom: 12px;
-    box-shadow: 0 4px 12px rgba(24, 122, 78, 0.2);
+    box-shadow: 0 4px 14px rgba(24, 122, 78, 0.25);
   }
   .btn-primary:active { transform: scale(0.98); }
   .btn-secondary {
     background: #eaf3ed;
     color: var(--accent);
   }
-  .status {
+  .note {
+    margin-top: 18px;
     font-size: 12px;
     color: #8da295;
-    margin-top: 16px;
   }
 </style>
 </head>
@@ -83,44 +85,29 @@
 <div class="card">
   <div class="logo">♻️</div>
   <h1>ARVY Mobile</h1>
-  <p id="msg">Opening ARVY App on your device… If it doesn't open automatically, download the installer below.</p>
+  <p id="msg">Tap the button below to open your ARVY App, or download the installer if you don't have it yet.</p>
 
-  <a id="btn-open" class="btn btn-primary" href="arvy://open">Open ARVY App</a>
-  <a id="btn-download" class="btn btn-secondary" href="arvy.apk" download>Download APK</a>
+  <!-- Opisyal na Android Intent URL para sa Chrome -->
+  <a id="btn-open" class="btn btn-primary" href="intent://open#Intent;scheme=arvy;package=com.example.recyclewifi;end">
+    Open ARVY App
+  </a>
 
-  <div class="status" id="timer-text">Checking app installation…</div>
+  <!-- Direct Download ng APK -->
+  <a id="btn-download" class="btn btn-secondary" href="arvy.apk" download>
+    Download APK
+  </a>
+
+  <div class="note">Reverse Vending Machine System</div>
 </div>
 
 <script>
-  // Link para sa Deep Link scheme ng inyong App
-  const appScheme = "arvy://open";
-  // Direct download link ng inyong APK sa parehong repository
-  const apkDownloadUrl = "https://lewynski.github.io/arvy/arvy.apk";
+  // Android Intent URI (subok na sa Google Chrome sa Android)
+  const intentUri = "intent://open#Intent;scheme=arvy;package=com.example.recyclewifi;end";
 
-  function tryOpenApp() {
-    const start = Date.now();
-    
-    // Subukang buksan ang app gamit ang custom scheme
-    window.location.href = appScheme;
-
-    // Timer para mag-fallback sa download kung hindi bumukas ang app sa loob ng 1.5 seconds
-    setTimeout(() => {
-      // Kung nanatili pa rin sa browser ang user (hindi nag-minimize ang browser para buksan ang app):
-      if (document.hidden || document.webkitHidden) {
-        return; // Nabuksan na ang app
-      }
-      
-      const elapsed = Date.now() - start;
-      if (elapsed < 2500) {
-        document.getElementById("msg").textContent = "ARVY App is not yet installed. Starting APK download…";
-        document.getElementById("timer-text").textContent = "Downloading installer…";
-        window.location.href = apkDownloadUrl;
-      }
-    }, 1500);
-  }
-
-  // Patakbuhin kaagad pagka-scan ng QR code
-  window.addEventListener("DOMContentLoaded", tryOpenApp);
+  // Subukang buksan agad pagka-load
+  window.onload = function() {
+    window.location.href = intentUri;
+  };
 </script>
 
 </body>
